@@ -69,9 +69,9 @@ let selectedParty;
 
 /* Updates state with all events/parties from the API*/
 async function getParties (){
-try (){
+try{
 let res = await fetch(API)
-let json = await res.json
+let json = await res.json()
 parties = json.data
 render()
 }catch(err){
@@ -80,11 +80,11 @@ console.error = (err)
 
 
 /* Updates state with the selected party details from the API*/
-async function getPartyDetails (){
-try(){
+async function getPartyDetails (id){
+try{
 let res = await fetch(`${API}/${id}`) //I probably need to pull through the ID or name, check docs
-let json = await res.json
-// not sure if I need no code here or if I need more code like party = json.data
+let json = await res.json()
+selectedParty = json.data
 render()
 }catch(err){
 console.error(err)
@@ -94,8 +94,12 @@ console.error(err)
 /* === Components === */
 
 /* Party name that shows more details about the party when selected  */
-function partyListItem (party) {} // Need to make this function
-
+function partyListItem (party) {
+for(let item of party){
+    let list = document.createElement("li")
+    item += list
+    return list
+}} //I feel like I missed a big step here
 
 /* List of all the parties */
 function displayPartyList (parties) {
@@ -103,12 +107,12 @@ const $parties = document.createElement("section")
 $parties.classList.add("parties-list")
 $parties.innerHTML = `
 <h2>Upcoming Parties</h2>
-<ul>${parties}</ul> 
-` // I don't think this is correct here might need to transpose these to the <li> instead, but I'm not sure
+<ul>${partyListItem()}</ul> 
+` // I think this should make new list items when calling this function
 
-$parties.querySelector.addEventListener('click', function(){
-
-})
+$parties.querySelector.addEventListener('click', async function(){
+    await getPartyDetails(selectedParty.id)
+}) // I think this is right but my logic might be backwards, left it async so it could take its time to load
 return $parties
 }
 
@@ -123,6 +127,10 @@ const $party = document.createElement("section")
 $party.classList.add("party-details")
 $party.innerHTML = `
 <h2>Party Details</h2>
+<h3>${selectedParty.name} #${selectedParty.id}</h3>
+<p>${selectedParty.date}</p>
+<p><em>${selectedParty.location}<em></p>
+<p>${selectedParty.description}</p>
 `
 return $party
 }
