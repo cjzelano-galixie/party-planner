@@ -75,7 +75,7 @@ let json = await res.json()
 parties = json.data
 render()
 }catch(err){
-console.error = (err)
+console.error(err)
 }}
 
 
@@ -107,10 +107,10 @@ const $parties = document.createElement("section")
 $parties.classList.add("parties-list")
 $parties.innerHTML = `
 <h2>Upcoming Parties</h2>
-<ul>${partyListItem()}</ul> 
+<ul>${partyListItem(p)}</ul> 
 ` // I think this should make new list items when calling this function
 
-$parties.querySelector.addEventListener('click', async function(){
+$parties.querySelector("ul").addEventListener('click', async function(){
     await getPartyDetails(selectedParty.id)
 }) // I think this is right but my logic might be backwards, left it async so it could take its time to load
 return $parties
