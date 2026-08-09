@@ -95,24 +95,27 @@ console.error(err)
 
 /* Party name that shows more details about the party when selected  */
 function partyListItem (party) {
-for(let item of party){
-    let list = document.createElement("li")
-    item += list
-    return list
-}} //I feel like I missed a big step here
+    const $list = document.createElement("li")
+    $list.textContent = party.name
+
+    $list.addEventListener("click", function(){
+        getPartyDetails(party.id)
+    })
+}
 
 /* List of all the parties */
 function displayPartyList (parties) {
 const $parties = document.createElement("section")
 $parties.classList.add("parties-list")
+
 $parties.innerHTML = `
 <h2>Upcoming Parties</h2>
-<ul>${partyListItem(p)}</ul> 
-` // I think this should make new list items when calling this function
+<ul></ul> 
+`
 
-$parties.querySelector("ul").addEventListener('click', async function(){
-    await getPartyDetails(selectedParty.id)
-}) // I think this is right but my logic might be backwards, left it async so it could take its time to load
+const $ul = $parties.querySelector("ul")
+const $partyItems = parties.map(party => partyListItem(party))
+$ul.append(...$partyItems)
 return $parties
 }
 
@@ -147,9 +150,10 @@ $app.innerHTML = `
 </main>
 `
 
-$app.querySelector("displayPartyList").replaceWith(displayPartyList())
+$app.querySelector("displayPartyList").replaceWith(displayPartyList(parties))
 $app.querySelector("displayPartyDetails").replaceWith(displayPartyDetails())
 
 }
 
 render()
+getParties()
