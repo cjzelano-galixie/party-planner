@@ -1,0 +1,45 @@
+body {
+  font-family: sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+main {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.parties-list,
+.party-details {
+  flex: 1;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+li:hover {
+  background-color: #f8f8f8;
+}
+
+li.selected {
+  font-weight: bold;
+  font-style: italic;
+}

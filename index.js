@@ -1,5 +1,5 @@
 // /* === API Variable ===
-// 1. Need to initiate the API variable 
+// 1. Need to initiate the API variable
 // */
 
 // /* === Empty Array and Variable ===
@@ -14,20 +14,20 @@
 // */
 
 // /* === Display, Logic, & Requests ===
-// 1. Display component that stores the party list array to the left of the Screen 
+// 1. Display component that stores the party list array to the left of the Screen
 // -- This component will call the getParties function/fetch
-// -- Display the following DOM script & then render function 
+// -- Display the following DOM script & then render function
 // ---- Party name
 
 // 2. A second display component for the selectedParty
 // -- This component CHECK PREVIOUS EXAMPLES but my guess is that I need to check the getPartyDetails function but make sure that the call matches the ID of the selectedParty. then run it through the display
 // - question, does selectedParty need to hold the ID or the name?
 // -- Display the following DOM script & then render function:
-// ---- Party Name 
+// ---- Party Name
 // ---- ID
 // ---- Date
-// ---- Description 
-// ---- Location 
+// ---- Description
+// ---- Location
 
 // 3. Event listener on party name in Display Component from party array/list
 // -- Which will do the following:
@@ -42,7 +42,6 @@
 // 3. Needs to render the specific party selected on the right from the event listener click
 // */
 
-
 /* === Code Start === */
 
 /**
@@ -54,106 +53,110 @@
  * @property {string} location
  */
 
-
 /* === Constants === */
-const BASE = "https://fsa-crud-2aa9294fe819.herokuapp.com/api"
-const COHORT = "/2026-FTB-CT-WEB-PT"
-const RESOURCE = "/events"
-const API = BASE + COHORT + RESOURCE
-
+const BASE = "https://fsa-crud-2aa9294fe819.herokuapp.com/api";
+const COHORT = "/2026-FTB-CT-WEB-PT";
+const RESOURCE = "/events";
+const API = BASE + COHORT + RESOURCE;
 
 /* === States === */
-let parties = []
+let parties = [];
 let selectedParty;
 
-
 /* Updates state with all events/parties from the API*/
-async function getParties (){
-try{
-let res = await fetch(API)
-let json = await res.json()
-parties = json.data
-render()
-}catch(err){
-console.error(err)
-}}
-
+async function getParties() {
+  try {
+    let res = await fetch(API);
+    let json = await res.json();
+    console.log("API response json:", json);
+    parties = json.data;
+    render();
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 /* Updates state with the selected party details from the API*/
-async function getPartyDetails (id){
-try{
-let res = await fetch(`${API}/${id}`) //I probably need to pull through the ID or name, check docs
-let json = await res.json()
-selectedParty = json.data
-render()
-}catch(err){
-console.error(err)
-}}
-
+async function getPartyDetails(id) {
+  try {
+    let res = await fetch(`${API}/${id}`); //I probably need to pull through the ID or name, check docs
+    let json = await res.json();
+    selectedParty = json.data;
+    render();
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 /* === Components === */
 
 /* Party name that shows more details about the party when selected  */
-function partyListItem (party) {
-    const $list = document.createElement("li")
-    $list.textContent = party.name
+function partyListItem(party) {
+  if (!party) return;
 
-    $list.addEventListener("click", function(){
-        getPartyDetails(party.id)
-    })
+  const $list = document.createElement("li");
+  $list.textContent = party.name;
+
+  if (selectedParty && selectedParty.id === party.id) {
+    $list.classList.add("selected");
+  }
+
+  $list.addEventListener("click", async function () {
+    await getPartyDetails(party.id);
+  });
+
+  return $list;
 }
 
 /* List of all the parties */
-function displayPartyList (parties) {
-const $parties = document.createElement("section")
-$parties.classList.add("parties-list")
+function displayPartyList(parties) {
+  const $parties = document.createElement("section");
+  $parties.classList.add("parties-list");
 
-$parties.innerHTML = `
+  $parties.innerHTML = `
 <h2>Upcoming Parties</h2>
 <ul></ul> 
-`
+`;
 
-const $ul = $parties.querySelector("ul")
-const $partyItems = parties.map(party => partyListItem(party))
-$ul.append(...$partyItems)
-return $parties
+  const $ul = $parties.querySelector("ul");
+  const $partyItems = parties.map((party) => partyListItem(party));
+  $ul.append(...$partyItems);
+  return $parties;
 }
 
 /* Detailed information about the selected party */
-function displayPartyDetails (party) {
-if(!selectedParty){
-    const $p = document.createElement("p")
-    $p.textContent = `Please select a party to view its details`
-    return $p
-}
-const $party = document.createElement("section")
-$party.classList.add("party-details")
-$party.innerHTML = `
+function displayPartyDetails(party) {
+  if (!selectedParty) {
+    const $p = document.createElement("p");
+    $p.textContent = `Please select a party to view its details`;
+    return $p;
+  }
+  const $party = document.createElement("section");
+  $party.classList.add("party-details");
+  $party.innerHTML = `
 <h2>Party Details</h2>
 <h3>${selectedParty.name} #${selectedParty.id}</h3>
 <p>${selectedParty.date}</p>
 <p><em>${selectedParty.location}<em></p>
 <p>${selectedParty.description}</p>
-`
-return $party
+`;
+  return $party;
 }
 
-
 /* === Render === */
-function render (){
-const $app = document.querySelector("#app")
-$app.innerHTML = `
+function render() {
+  const $app = document.querySelector("#app");
+  $app.innerHTML = `
 <h1>Party Planner</h1>
 <main>
 <displayPartyList></displayPartyList>
 <displayPartyDetails></displayPartyDetails>
 </main>
-`
+`;
 
-$app.querySelector("displayPartyList").replaceWith(displayPartyList(parties))
-$app.querySelector("displayPartyDetails").replaceWith(displayPartyDetails())
-
+  $app.querySelector("displayPartyList").replaceWith(displayPartyList(parties));
+  $app.querySelector("displayPartyDetails").replaceWith(displayPartyDetails());
 }
 
-render()
-getParties()
+render();
+getParties();
